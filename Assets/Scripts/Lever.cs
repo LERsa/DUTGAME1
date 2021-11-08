@@ -7,6 +7,7 @@ using UnityEngine;
 public class Lever : MonoBehaviour
 {
     [SerializeField] private Sprite _activeSprite;
+    [SerializeField] private Chest _chest;
     private Sprite _inactiveSprite;
 
     private SpriteRenderer _spriteRenderer;
@@ -25,7 +26,8 @@ public class Lever : MonoBehaviour
         if (player != null && !_activated)
         {
             _spriteRenderer.sprite = _activeSprite;
-            Debug.Log(message: "activated");
+            _chest.Activated = true;                            
+            _chest._spriteRenderer.sprite = _chest._activeSprite; // изменение спрайта сундука в скрипте "chest"
             _activated = true;
         }
 

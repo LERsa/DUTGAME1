@@ -1,11 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+
+
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMover : MonoBehaviour
 {
     private Rigidbody2D _rigidbody;
+    [SerializeField] private int _maxHP;
     [SerializeField]private float _speed;
     [SerializeField] private SpriteRenderer _spriterenderer;
     [SerializeField] private float _jumpforce;
@@ -23,10 +29,40 @@ public class PlayerMover : MonoBehaviour
     [SerializeField] private string _jumpAnimatorKey;
     [SerializeField] private string _crawlAnimatorKey;
 
+    [Header(("UI"))]
+    [SerializeField] private TMP_Text _amountOfCoinsText;
+    [SerializeField] private Slider _HPBar;
+
     private float _horizontalDirection;
     private float _verticalDirection;
     private bool _jump;
     private bool _crawl;
+    private int _coinsAmount;
+    private int _HP;
+    public int Coins 
+    {
+        get => _coinsAmount;
+        
+        set
+        {
+            _coinsAmount = value;
+            _amountOfCoinsText.text = value.ToString();
+        }
+    }
+
+    private int CurrentHP
+    {
+        get => _HP;
+
+        set
+        {
+            _HP = value;
+            _HPBar.value = value;
+        }
+    }
+
+
+
 
     public bool CanClimb {private get; set; }
 
@@ -35,7 +71,10 @@ public class PlayerMover : MonoBehaviour
 
     void Start()
     {
+        Coins = 0;
         _rigidbody = GetComponent<Rigidbody2D>();
+        _HPBar.maxValue = _maxHP;
+        CurrentHP = _maxHP;
     }
 
     // Update is called once per frame
@@ -112,8 +151,32 @@ public class PlayerMover : MonoBehaviour
 
     public void AddMoney(int money)
     {
-        Debug.Log(message: "Money raised: " + money);
+        Coins += money;
     }
-    
+
+    public void TakeDamage(int damage)
+    {
+        CurrentHP -= damage;
+        Debug.Log(message: "HP LEft: " + CurrentHP);
+        if(CurrentHP <= 0)
+        {
+            gameObject.SetActive(false);
+            Invoke(nameof(ReloadScene), time: 1f);
+        }
+      
+    }
+
+    public void HealHP(int hpGained)
+    {
+        int missingHP = _maxHP - CurrentHP;
+        int pointsToAdd = missingHP > hpGained ? hpGained : missingHP;
+        CurrentHP += pointsToAdd;
+    }
+
+    private void ReloadScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
 }
 

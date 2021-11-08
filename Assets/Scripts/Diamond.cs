@@ -5,7 +5,7 @@ using UnityEngine;
 public class Diamond : MonoBehaviour
 {
 
-    [SerializeField] private int _cost;
+    [SerializeField] private int _coinsamount;
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -13,7 +13,7 @@ public class Diamond : MonoBehaviour
 
         if (player != null)
         {
-            player.AddMoney(_cost);
+            player.AddMoney(_coinsamount); 
             Destroy(gameObject);
         }
 
